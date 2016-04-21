@@ -1,0 +1,15 @@
+How to upload a project to github? Assume you have create a new repository and get the path(named PATH)
+By follow steps:
+1.(Init repository)index to root directory of the target project,then execute "git init"
+2.(Add files to repository )add all files of the project to the repository, execute "git add ."
+3.(Commit) execute "git commit -m 'your descriptions'"
+4.() execute "git remote add origin PATH"
+5. execute "git pull origin master"
+6. execute "git push -u origin master"
+
+
+tips:
+     you need to input your github account ,both username and password
+     if you see like this "Please enter a commit message to explain why this merge is necessary",do follows:
+          1. press Esc on the keyborad
+          2.input ": wq"
