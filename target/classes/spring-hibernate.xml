@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/aop
+        http://www.springframework.org/schema/aop/spring-aop.xsd
+        http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx.xsd"
+	>
+    
+    <!--读取jdbc.properties -->
+    <context:property-placeholder location="classpath:jdbc.properties"/>
+    
+	<!--数据源配置 (取值自jdbc.properties)-->
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
+		destroy-method="close">
+		<property name="driverClassName" value="${jdbc.driverClassName}" />
+		<property name="url" value="${jdbc.url}" />
+		<property name="username" value="${jdbc.username}" />
+		<property name="password" value="${jdbc.password}" />
+	</bean>
+
+	<!--获取SessionFactory实例(hibernate核心配置和对象关系映射(ORM)) -->
+	<bean id="sessionFactory"
+		class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="packagesToScan">
+		   <list>
+		      <value>com.spring.model</value>
+		   </list>
+		</property>
+		<!-- <property name="annotatedClasses">
+			<list>
+				<value>com.spring.model.User</value>
+			</list>
+		</property> -->
+		
+		<!-- <property name="mappingResources"> <list> <value>User.hbm.xml</value> 
+			</list> </property> -->
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>
+				<prop key="hibernate.show_sql">false</prop>
+				<prop key="hibernate.hbm2ddl.auto">update</prop>
+			</props>
+		</property>
+	</bean>
+    
+    <!--spring容器管理hibernate事务  -->
+    <bean id="txManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+	    <property name="sessionFactory"  ref="sessionFactory"/>
+	</bean>
+    
+    <tx:annotation-driven transaction-manager="txManager"/>
+    
+	<!--扫描实体类，解析相关注解 ，并注入-->
+    <context:component-scan base-package="com.spring.dao.impl"/>
+    <context:component-scan base-package="com.spring.service"/>
+	<context:component-scan base-package="com.spring.controller" />
+	
+</beans>
